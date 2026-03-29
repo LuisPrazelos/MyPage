@@ -8,9 +8,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-// Serve the HTML pages from the current directory
-app.use(express.static(__dirname));
-
 // Set up Nodemailer transport
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -46,6 +43,10 @@ app.post('/api/contact', async (req, res) => {
         res.status(500).json({ error: 'Failed to send email. Check your App Password credentials.' });
     }
 });
+
+// Serve the HTML pages from the current directory (Moved below routes)
+app.use(express.static(__dirname));
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
