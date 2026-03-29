@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luís | Curriculum Vitae</title>
+    <meta name="description" content="Curriculum Vitae of Luís Prazelos — App & AI Student at Thomas More IT Factory.">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cv-wrapper {
+            width: 70%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 0 6rem 0;
+        }
+
+        .cv-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            margin: 2rem 0;
+            position: relative;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .cv-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Styling */
+        .cv-sidebar {
+            background: rgba(0, 0, 0, 0.02);
+            border-right: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .cv-sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+
+        .sidebar-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px dashed var(--border-color);
+            overflow: hidden;
+            margin: 0 auto 2rem auto;
+        }
+
+        .sidebar-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-contact {
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-contact a,
+        .sidebar-contact span {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+            text-decoration: none;
+        }
+
+        .sidebar-contact a:hover {
+            color: var(--accent-red);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .sidebar-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-red);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            height: 1px;
+            background: var(--border-color);
+            flex: 1;
+        }
+
+        .sidebar-list {
+            list-style: none;
+        }
+
+        .sidebar-list li {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .sidebar-list li::before {
+            content: '>';
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+
+        /* Main Content Styling */
+        .cv-main {
+            padding: 4rem 3.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .cv-main {
+                padding: 3rem 1.5rem;
+            }
+        }
+
+        .cv-main-header {
+            margin-bottom: 3.5rem;
+        }
+
+        .cv-main-header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 0.4rem;
+        }
+
+        .cv-main-header .role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent-red);
+            margin-bottom: 1.2rem;
+        }
+
+        .cv-main-header .contact-line {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .cv-main-header .contact-line a {
+            color: var(--text-secondary);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+
+        .cv-main-header .contact-line a:hover {
+            color: var(--accent-red);
+        }
+
+        /* Shared Components */
+        .cv-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent-red);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cv-entry {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-start;
+        }
+
+        .cv-entry-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            min-width: 100px;
+            padding-top: 0.25rem;
+        }
+
+        .cv-entry-body h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .cv-entry-body .org {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+        }
+
+        .cv-entry-body p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .cv-project {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-start;
+        }
+
+        .cv-project-thumb {
+            width: 90px;
+            height: 70px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .cv-project-placeholder {
+            width: 90px;
+            height: 70px;
+            border-radius: 6px;
+            border: 1px dashed var(--border-color);
+            background: rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .cv-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .cv-entry {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+
+        /* ── PRINT / PDF STYLES ── */
+        @media print {
+
+            /* Page setup */
+            @page {
+                size: A4;
+                margin: 14mm 14mm 14mm 14mm;
+            }
+
+            /* Base reset */
+            body {
+                background: #fff !important;
+                color: #111 !important;
+                font-size: 10pt !important;
+            }
+
+            /* Hide UI chrome */
+            .bg-glow,
+            nav,
+            footer,
+            .cv-actions {
+                display: none !important;
+            }
+
+            /* Remove animation states so nothing is invisible */
+            .fade-up,
+            .slide-in-left,
+            .slide-in-right,
+            .scale-in {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            /* ── Compact layout ── */
+            .cv-wrapper {
+                max-width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            /* Header: shrink photo and tighten padding */
+            .cv-header {
+                padding: 0 0 1rem 0;
+                gap: 1.2rem;
+                flex-wrap: nowrap;
+                align-items: center;
+            }
+
+            .cv-photo {
+                width: 90px !important;
+                height: 90px !important;
+                flex-shrink: 0;
+                border-color: #ccc !important;
+            }
+
+            .cv-identity h1 {
+                font-size: 1.8rem !important;
+                margin-bottom: 0.15rem;
+            }
+
+            .cv-identity .role {
+                font-size: 0.8rem !important;
+                margin-bottom: 0.4rem;
+                color: #c0392b !important;
+            }
+
+            .cv-identity .contact-line {
+                font-size: 0.75rem !important;
+                gap: 1rem;
+                color: #444 !important;
+            }
+
+            .cv-identity .contact-line a {
+                color: #444 !important;
+            }
+
+            /* Sections: reduce top margin */
+            .cv-section {
+                margin-top: 1.2rem !important;
+            }
+
+            .cv-section-title {
+                font-size: 0.7rem !important;
+                margin-bottom: 0.6rem !important;
+                padding-bottom: 0.4rem !important;
+                border-bottom-color: #ddd !important;
+                color: #c0392b !important;
+            }
+
+            /* Timeline entries */
+            .cv-entry {
+                gap: 1rem;
+                margin-bottom: 0.9rem !important;
+            }
+
+            .cv-entry-date {
+                font-size: 0.72rem !important;
+                min-width: 90px;
+                color: #555 !important;
+            }
+
+            .cv-entry-body h4 {
+                font-size: 0.9rem !important;
+                margin-bottom: 0.1rem;
+                color: #111 !important;
+            }
+
+            .cv-entry-body .org {
+                font-size: 0.75rem !important;
+                margin-bottom: 0.3rem;
+                color: #555 !important;
+            }
+
+            .cv-entry-body p {
+                font-size: 0.8rem !important;
+                margin-bottom: 0;
+                color: #444 !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Projects */
+            .cv-project {
+                gap: 0.8rem;
+                margin-bottom: 0.9rem !important;
+            }
+
+            .cv-project-thumb {
+                width: 60px !important;
+                height: 50px !important;
+                border-color: #ccc !important;
+            }
+
+            .cv-project-placeholder {
+                width: 60px !important;
+                height: 50px !important;
+                border-color: #ccc !important;
+                background: #f5f5f5 !important;
+                color: #888 !important;
+                font-size: 0.65rem !important;
+            }
+
+            .cv-project-info h4 {
+                font-size: 0.9rem !important;
+                color: #111 !important;
+            }
+
+            .cv-project-info .status {
+                font-size: 0.72rem !important;
+                color: #c0392b !important;
+                margin-bottom: 0.2rem;
+            }
+
+            .cv-project-info p {
+                font-size: 0.8rem !important;
+                color: #444 !important;
+                line-height: 1.5 !important;
+                margin-bottom: 0.3rem;
+            }
+
+            /* Skills grid */
+            .skills-grid {
+                gap: 0.15rem 2rem;
+            }
+
+            .skill-item {
+                font-size: 0.8rem !important;
+                padding: 0.25rem 0;
+                color: #444 !important;
+                border-bottom-color: #eee !important;
+            }
+
+            /* Tags */
+            .tag {
+                font-size: 0.65rem !important;
+                padding: 0.1rem 0.4rem;
+                border-color: #ccc !important;
+                color: #555 !important;
+            }
+
+            /* Colors */
+            .highlight-text {
+                color: #c0392b !important;
+                -webkit-text-fill-color: #c0392b !important;
+                background: none !important;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                color: #111 !important;
+            }
+
+            /* No page breaks mid-entry */
+            .cv-entry,
+            .cv-project,
+            .cv-section {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="neural-canvas"></canvas>
+    <div class="bg-glow"></div>
+    <nav class="fade-up">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Me</a>
+            <a href="projects.html">Projects</a>
+            <a href="cv.html" class="active">CV</a>
+            <a href="contact.html">Contact</a>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <svg class="sun-icon" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+                <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="cv-wrapper">
+        <div class="cv-card fade-up">
+            <!-- ── SIDEBAR ── -->
+            <aside class="cv-sidebar">
+                <div class="sidebar-photo scale-in">
+                    <img src="IMG_1080.jpeg" alt="Luís Prazelos">
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-title">Technical Skills</p>
+                    <ul class="sidebar-list">
+                        <li>App & Mobile Development</li>
+                        <li>Artificial Intelligence / ML</li>
+                        <li>Frontend Engineering</li>
+                        <li>Database Architecture</li>
+                        <li>Python</li>
+                        <li>Hardware / Robotics</li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-title">Soft Skills</p>
+                    <ul class="sidebar-list">
+                        <li>Leadership</li>
+                        <li>Agile Problem Solving</li>
+                        <li>Communication</li>
+                        <li>Adaptability</li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-title">Languages</p>
+                    <ul class="sidebar-list">
+                        <li>Portuguese — Native</li>
+                        <li>Dutch — Fluent</li>
+                        <li>English — Fluent</li>
+                        <li>French — Basic</li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-title">Interests</p>
+                    <ul class="sidebar-list">
+                        <li>Competitive Football</li>
+                        <li>Pokémon Collecting</li>
+                        <li>AI Tech</li>
+                        <li>Hardware Tinkering</li>
+                        <li>Motorcycles</li>
+                        <li>Gaming</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- ── MAIN CONTENT ── -->
+            <div class="cv-main">
+                <header class="cv-main-header">
+                    <div class="cv-identity slide-in-left">
+                        <h1>Luís <span class="highlight-text">Prazelos</span></h1>
+                        <p class="role">> App &amp; AI Student @ Thomas More IT Factory</p>
+                        <div class="contact-line">
+                            <a href="mailto:luisprazelos@gmail.com">luisprazelos@gmail.com</a>
+                            <a href="https://www.linkedin.com/in/luis-prazelos-2a1880337/" target="_blank">LinkedIn</a>
+                            <span>Belgium</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- ── EDUCATION ── -->
+                <section class="cv-section slide-in-left">
+                    <p class="cv-section-title">Education</p>
+                    <div class="cv-entry">
+                        <span class="cv-entry-date">2024 – Present</span>
+                        <div class="cv-entry-body">
+                            <h4>Applied Computer Science / Electronics – ICT</h4>
+                            <p class="org">Thomas More IT Factory · Geel, Belgium</p>
+                            <p>Specialisation in App &amp; AI Development. Hands-on labs covering mobile
+                                applications,
+                                artificial intelligence, full-stack web development, and team-based development
+                                sprints.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── PROJECTS ── -->
+                <section class="cv-section slide-in-right">
+                    <p class="cv-section-title">Projects</p>
+
+                    <div class="cv-project">
+                        <img class="cv-project-thumb" src="IMG_1080.jpeg" alt="Self-Driving Cart">
+                        <div class="cv-project-info">
+                            <h4>01. Self-Driving Cart</h4>
+                            <p class="status">// Completed · Robotics</p>
+                            <p>Transformed a hoverboard into a functional self-driving cart with programmatic
+                                speed control.</p>
+                            <div class="tag-row">
+                                <span class="tag">Robotics</span>
+                                <span class="tag">Python</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cv-project">
+                        <img class="cv-project-thumb" src="IMG_0908.jpg" alt="AI Smart Bin">
+                        <div class="cv-project-info">
+                            <h4>02. AI Smart Bin</h4>
+                            <p class="status">// Completed · AI</p>
+                            <p>Self-opening bin using proximity sensors and basic AI detection.</p>
+                            <div class="tag-row">
+                                <span class="tag">AI</span>
+                                <span class="tag">Hardware</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cv-project">
+                        <div class="cv-project-placeholder">WIP</div>
+                        <div class="cv-project-info">
+                            <h4>03. Workout Tracker App</h4>
+                            <p class="status">// In Development</p>
+                            <p>A comprehensive web application for tracking and planning workouts with social
+                                connectivity.</p>
+                            <div class="tag-row">
+                                <span class="tag">Web App</span>
+                                <span class="tag">Social</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── DOWNLOAD ── -->
+                <div class="cv-actions">
+                    <button id="download-pdf-btn" class="cta-btn" onclick="window.print()">Download PDF
+                        ↓</button>
+                    <a href="contact.html" class="cta-btn"
+                        style="border-color: var(--border-color); color: var(--text-secondary);">Get In Touch
+                        →</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fade-up">
+        <div class="signature">Luís_</div>
+        <div class="nav-links">
+            <a href="https://www.linkedin.com/in/luis-prazelos-2a1880337/" target="_blank">LinkedIn</a>
+            <a href="mailto:luisprazelos@gmail.com">Email</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Auto-trigger print dialog when arriving from ?print=1
+        if (new URLSearchParams(window.location.search).get('print') === '1') {
+            window.addEventListener('load', function () {
+                // Small delay so fonts/images settle and animations don't block
+                setTimeout(function () { window.print(); }, 800);
+            });
+        }
+    </script>
+</body>
+
+</html>
