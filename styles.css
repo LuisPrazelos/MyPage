@@ -7,7 +7,7 @@
     --text-primary: #334155; /* Dark slate instead of harsh black */
     --text-secondary: #64748b;
     --accent-red: #e3350d;
-    --glow-color: rgba(227, 53, 13, 0.18);
+    --glow-color: rgba(227, 53, 13, 0.38);
     --transition-speed: 0.3s;
 }
 
@@ -18,7 +18,7 @@ body.dark-mode {
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --accent-red: #ff4b2b;
-    --glow-color: rgba(255, 75, 43, 0.25);
+    --glow-color: rgba(255, 75, 43, 0.5);
 }
 
 * {
@@ -72,16 +72,16 @@ body::before {
 
 .bg-glow {
     position: fixed;
-    width: 800px;
-    height: 800px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 58%);
     left: var(--mouse-x, 50vw);
     top: var(--mouse-y, 50vh);
     transform: translate(-50%, -50%);
     z-index: -2;
     pointer-events: none;
-    filter: blur(60px);
+    filter: blur(32px);
     transition: background 0.5s ease;
 }
 

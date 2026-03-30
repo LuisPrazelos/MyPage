@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luís | Curriculum Vitae</title>
     <meta name="description" content="Curriculum Vitae of Luís Prazelos — App & AI Student at Thomas More IT Factory.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -50,10 +51,10 @@
         }
 
         .sidebar-photo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 2px dashed var(--border-color);
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
             overflow: hidden;
             margin: 0 auto 2rem auto;
         }
@@ -62,6 +63,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 19%;
         }
 
         .sidebar-contact {
@@ -138,6 +140,10 @@
 
         .cv-main-header {
             margin-bottom: 3.5rem;
+        }
+
+        .print-cv-photo {
+            display: none;
         }
 
         .cv-main-header h1 {
@@ -322,6 +328,39 @@
                 max-width: 100%;
                 padding: 0;
                 margin: 0;
+            }
+
+            .cv-card {
+                display: block !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+            }
+
+            .cv-sidebar {
+                display: none !important;
+            }
+
+            .cv-main {
+                padding: 0 !important;
+            }
+
+            .cv-main-header {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+                margin-bottom: 1.2rem !important;
+            }
+
+            .print-cv-photo {
+                display: block !important;
+                width: 120px !important;
+                height: 120px !important;
+                border-radius: 8px !important;
+                border: 1px solid #ccc !important;
+                object-fit: cover !important;
+                object-position: center 22% !important;
+                flex-shrink: 0 !important;
             }
 
             /* Header: shrink photo and tighten padding */
@@ -510,7 +549,7 @@
             <!-- ── SIDEBAR ── -->
             <aside class="cv-sidebar">
                 <div class="sidebar-photo scale-in">
-                    <img src="IMG_1080.jpeg" alt="Luís Prazelos">
+                    <img src="IMG_0453.jpg" alt="Luís Prazelos">
                 </div>
 
                 <div class="sidebar-section">
@@ -561,6 +600,7 @@
             <!-- ── MAIN CONTENT ── -->
             <div class="cv-main">
                 <header class="cv-main-header">
+                    <img class="print-cv-photo" src="IMG_0453.jpg" alt="Luís Prazelos">
                     <div class="cv-identity slide-in-left">
                         <h1>Luís <span class="highlight-text">Prazelos</span></h1>
                         <p class="role">> App &amp; AI Student @ Thomas More IT Factory</p>
@@ -667,3 +707,4 @@
 </body>
 
 </html>
+
