@@ -76,21 +76,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw(ctx) {
+            const isDark = document.body.classList.contains('dark-mode');
             ctx.fillStyle = this.getColor();
+            ctx.shadowBlur = isDark ? 10 : 0;
+            ctx.shadowColor = isDark ? this.getGlowColor() : 'transparent';
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.closePath();
             ctx.fill();
+            ctx.shadowBlur = 0;
         }
 
         getColor() {
             const isDark = document.body.classList.contains('dark-mode');
             if (this.colorType === 'red') {
-                return isDark ? '#ff4b2b' : '#e3350d';
+                return isDark ? '#ff6b4a' : '#c2410c';
             } else if (this.colorType === 'orange') {
-                return isDark ? '#f97316' : '#ea580c';
+                return isDark ? '#fb923c' : '#d97706';
             }
-            return isDark ? 'rgba(148, 163, 184, 0.25)' : 'rgba(100, 116, 139, 0.25)';
+            return isDark ? 'rgba(226, 232, 240, 0.88)' : 'rgba(51, 65, 85, 0.5)';
+        }
+
+        getGlowColor() {
+            if (this.colorType === 'red') return 'rgba(255, 107, 74, 0.7)';
+            if (this.colorType === 'orange') return 'rgba(251, 146, 60, 0.65)';
+            return 'rgba(226, 232, 240, 0.45)';
         }
 
         update(mouse) {
@@ -171,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (this.particles[i].colorType === 'orange' || this.particles[j].colorType === 'orange') {
                             this.ctx.strokeStyle = `rgba(249, 115, 22, ${opacity * 0.4})`;
                         } else {
-                            this.ctx.strokeStyle = isDark ? `rgba(148, 163, 184, ${opacity * 0.15})` : `rgba(100, 116, 139, ${opacity * 0.15})`;
+                            this.ctx.strokeStyle = isDark ? `rgba(191, 219, 254, ${opacity * 0.28})` : `rgba(51, 65, 85, ${opacity * 0.24})`;
                         }
                         
                         this.ctx.lineWidth = 0.8;
