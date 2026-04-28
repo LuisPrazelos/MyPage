@@ -57,13 +57,9 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             margin: 0 auto 2rem auto;
-        }
-
-        .sidebar-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center 19%;
+            background-size: cover;
+            background-position: center 19%;
+            background-repeat: no-repeat;
         }
 
         .sidebar-contact {
@@ -290,31 +286,159 @@
         }
 
 
-        /* ── PRINT / PDF STYLES ── */
-        @media print {
+        /* ── PDF CAPTURE HELPERS ── */
+        .cv-card.pdf-capture {
+            /* Force all animations visible during capture */
+        }
 
-            /* Page setup */
+        .cv-card.pdf-capture .fade-up,
+        .cv-card.pdf-capture .slide-in-left,
+        .cv-card.pdf-capture .slide-in-right,
+        .cv-card.pdf-capture .scale-in {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* Download button spinner state */
+        .cta-btn.generating {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .cta-btn.generating::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--text-secondary);
+            border-top-color: var(--accent-red);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── PREVIEW MODAL ── */
+        .pdf-preview-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .pdf-preview-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pdf-preview-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1rem;
+        }
+
+        .pdf-preview-paper {
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45),
+                        0 0 0 1px rgba(255, 255, 255, 0.08);
+            max-height: calc(100vh - 11rem);
+            max-width: 85vw;
+            overflow: hidden;
+            transform: scale(0.92);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.4s ease;
+        }
+
+        .pdf-preview-overlay.active .pdf-preview-paper {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .pdf-preview-paper img {
+            display: block;
+            max-width: 100%;
+            max-height: calc(100vh - 11rem);
+            height: auto;
+            width: auto;
+        }
+
+        .pdf-preview-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .pdf-preview-actions button {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid;
+        }
+
+        .preview-btn-download {
+            background: var(--accent-red, #e3350d);
+            color: #fff;
+            border-color: transparent !important;
+        }
+
+        .preview-btn-download:hover {
+            background: #ff4b2b;
+            box-shadow: 0 0 24px rgba(255, 75, 43, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .preview-btn-cancel {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .preview-btn-cancel:hover {
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            color: #fff;
+        }
+
+        /* ── PRINT STYLES (mirrors on-screen layout) ── */
+        @media print {
             @page {
                 size: A4;
-                margin: 14mm 14mm 14mm 14mm;
+                margin: 10mm;
             }
 
-            /* Base reset */
             body {
                 background: #fff !important;
                 color: #111 !important;
-                font-size: 10pt !important;
             }
 
-            /* Hide UI chrome */
             .bg-glow,
             nav,
             footer,
-            .cv-actions {
+            .cv-actions,
+            #neural-canvas {
                 display: none !important;
             }
 
-            /* Remove animation states so nothing is invisible */
             .fade-up,
             .slide-in-left,
             .slide-in-right,
@@ -323,200 +447,66 @@
                 transform: none !important;
             }
 
-            /* ── Compact layout ── */
             .cv-wrapper {
-                max-width: 100%;
-                padding: 0;
-                margin: 0;
-            }
-
-            .cv-card {
-                display: block !important;
-                box-shadow: none !important;
-                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
                 margin: 0 !important;
             }
 
+            .cv-card {
+                grid-template-columns: 260px 1fr !important;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
             .cv-sidebar {
-                display: none !important;
+                display: block !important;
+                background: #f8f8f8 !important;
+                border-right: 1px solid #ddd !important;
+                padding: 2rem 1.5rem !important;
+            }
+
+            .sidebar-photo {
+                width: 120px !important;
+                height: 120px !important;
             }
 
             .cv-main {
-                padding: 0 !important;
+                padding: 2rem 2.5rem !important;
             }
 
             .cv-main-header {
-                display: flex !important;
-                align-items: center !important;
-                gap: 1rem !important;
-                margin-bottom: 1.2rem !important;
+                margin-bottom: 2rem !important;
             }
 
             .print-cv-photo {
-                display: block !important;
-                width: 120px !important;
-                height: 120px !important;
-                border-radius: 8px !important;
-                border: 1px solid #ccc !important;
-                object-fit: cover !important;
-                object-position: center 22% !important;
-                flex-shrink: 0 !important;
+                display: none !important;
             }
 
-            /* Header: shrink photo and tighten padding */
-            .cv-header {
-                padding: 0 0 1rem 0;
-                gap: 1.2rem;
-                flex-wrap: nowrap;
-                align-items: center;
+            .cv-main-header h1 {
+                font-size: 2rem !important;
             }
 
-            .cv-photo {
-                width: 90px !important;
-                height: 90px !important;
-                flex-shrink: 0;
-                border-color: #ccc !important;
-            }
-
-            .cv-identity h1 {
-                font-size: 1.8rem !important;
-                margin-bottom: 0.15rem;
-            }
-
-            .cv-identity .role {
-                font-size: 0.8rem !important;
-                margin-bottom: 0.4rem;
-                color: #c0392b !important;
-            }
-
-            .cv-identity .contact-line {
-                font-size: 0.75rem !important;
-                gap: 1rem;
-                color: #444 !important;
-            }
-
-            .cv-identity .contact-line a {
-                color: #444 !important;
-            }
-
-            /* Sections: reduce top margin */
-            .cv-section {
-                margin-top: 1.2rem !important;
-            }
-
+            .sidebar-title,
             .cv-section-title {
-                font-size: 0.7rem !important;
-                margin-bottom: 0.6rem !important;
-                padding-bottom: 0.4rem !important;
-                border-bottom-color: #ddd !important;
                 color: #c0392b !important;
             }
 
-            /* Timeline entries */
-            .cv-entry {
-                gap: 1rem;
-                margin-bottom: 0.9rem !important;
-            }
-
-            .cv-entry-date {
-                font-size: 0.72rem !important;
-                min-width: 90px;
-                color: #555 !important;
-            }
-
-            .cv-entry-body h4 {
-                font-size: 0.9rem !important;
-                margin-bottom: 0.1rem;
-                color: #111 !important;
-            }
-
-            .cv-entry-body .org {
-                font-size: 0.75rem !important;
-                margin-bottom: 0.3rem;
-                color: #555 !important;
-            }
-
-            .cv-entry-body p {
-                font-size: 0.8rem !important;
-                margin-bottom: 0;
-                color: #444 !important;
-                line-height: 1.5 !important;
-            }
-
-            /* Projects */
-            .cv-project {
-                gap: 0.8rem;
-                margin-bottom: 0.9rem !important;
-            }
-
-            .cv-project-thumb {
-                width: 60px !important;
-                height: 50px !important;
-                border-color: #ccc !important;
-            }
-
-            .cv-project-placeholder {
-                width: 60px !important;
-                height: 50px !important;
-                border-color: #ccc !important;
-                background: #f5f5f5 !important;
-                color: #888 !important;
-                font-size: 0.65rem !important;
-            }
-
-            .cv-project-info h4 {
-                font-size: 0.9rem !important;
-                color: #111 !important;
-            }
-
-            .cv-project-info .status {
-                font-size: 0.72rem !important;
+            .sidebar-list li::before {
                 color: #c0392b !important;
-                margin-bottom: 0.2rem;
             }
 
-            .cv-project-info p {
-                font-size: 0.8rem !important;
-                color: #444 !important;
-                line-height: 1.5 !important;
-                margin-bottom: 0.3rem;
-            }
-
-            /* Skills grid */
-            .skills-grid {
-                gap: 0.15rem 2rem;
-            }
-
-            .skill-item {
-                font-size: 0.8rem !important;
-                padding: 0.25rem 0;
-                color: #444 !important;
-                border-bottom-color: #eee !important;
-            }
-
-            /* Tags */
-            .tag {
-                font-size: 0.65rem !important;
-                padding: 0.1rem 0.4rem;
-                border-color: #ccc !important;
-                color: #555 !important;
-            }
-
-            /* Colors */
             .highlight-text {
-                color: #c0392b !important;
-                -webkit-text-fill-color: #c0392b !important;
-                background: none !important;
-            }
-
-            h1,
-            h2,
-            h3,
-            h4 {
                 color: #111 !important;
             }
 
-            /* No page breaks mid-entry */
+            .highlight-text::after {
+                background-color: #c0392b !important;
+            }
+
             .cv-entry,
             .cv-project,
             .cv-section {
@@ -548,8 +538,7 @@
         <div class="cv-card fade-up">
             <!-- ── SIDEBAR ── -->
             <aside class="cv-sidebar">
-                <div class="sidebar-photo scale-in">
-                    <img src="IMG_0453.jpg" alt="Luís Prazelos">
+                <div class="sidebar-photo scale-in" style="background-image: url('IMG_0453.jpg');">
                 </div>
 
                 <div class="sidebar-section">
@@ -627,6 +616,19 @@
                         </div>
                     </div>
                 </section>
+                
+                <!-- ── WORK EXPERIENCE ── -->
+                <section class="cv-section slide-in-left">
+                    <p class="cv-section-title">Work Experience</p>
+                    <div class="cv-entry">
+                        <span class="cv-entry-date">Summer Periods</span>
+                        <div class="cv-entry-body">
+                            <h4>Kitchen Assistant</h4>
+                            <p class="org">Sint Elisabeth Hospital · Turnhout, Belgium</p>
+                            <p>Responsible for meal plating and preparation within a hospital environment. Managed the organization of breakfast and dinner trays (bread service) and coordinated the plating of warm midday meals. Operated specialized temperature-controlled delivery units (fridge/heater trolleys) to ensure optimal meal quality and safety.</p>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- ── PROJECTS ── -->
                 <section class="cv-section slide-in-right">
@@ -676,7 +678,7 @@
 
                 <!-- ── DOWNLOAD ── -->
                 <div class="cv-actions">
-                    <button id="download-pdf-btn" class="cta-btn" onclick="window.print()">Download PDF
+                    <button id="download-pdf-btn" class="cta-btn" onclick="generateCV()">Download PDF
                         ↓</button>
                     <a href="contact.html" class="cta-btn"
                         style="border-color: var(--border-color); color: var(--text-secondary);">Get In Touch
@@ -694,15 +696,130 @@
         </div>
     </footer>
 
+    <!-- PDF Preview Modal -->
+    <div class="pdf-preview-overlay" id="pdf-preview-overlay">
+        <p class="pdf-preview-label">PDF Preview</p>
+        <div class="pdf-preview-paper">
+            <img id="pdf-preview-img" src="" alt="CV Preview">
+        </div>
+        <div class="pdf-preview-actions">
+            <button class="preview-btn-download" id="preview-download-btn">Download PDF ↓</button>
+            <button class="preview-btn-cancel" id="preview-cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
     <script>
-        // Auto-trigger print dialog when arriving from ?print=1
-        if (new URLSearchParams(window.location.search).get('print') === '1') {
-            window.addEventListener('load', function () {
-                // Small delay so fonts/images settle and animations don't block
-                setTimeout(function () { window.print(); }, 800);
-            });
+        // Store PDF data so the preview "Download" button can use it
+        let pendingPdfData = null;
+
+        async function generateCV() {
+            const btn = document.getElementById('download-pdf-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating…';
+            btn.classList.add('generating');
+
+            try {
+                const card = document.querySelector('.cv-card');
+                const actions = document.querySelector('.cv-actions');
+
+                // Hide action buttons so they don't appear in the capture
+                actions.style.display = 'none';
+
+                // Force all animations visible for the capture
+                card.classList.add('pdf-capture');
+                const animEls = card.querySelectorAll('.fade-up, .slide-in-left, .slide-in-right, .scale-in');
+                animEls.forEach(el => el.classList.add('visible'));
+
+                // Small delay for reflow
+                await new Promise(r => setTimeout(r, 300));
+
+                // Capture the card at high resolution
+                const canvas = await html2canvas(card, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    windowWidth: card.scrollWidth,
+                    windowHeight: card.scrollHeight
+                });
+
+                // Restore action buttons
+                actions.style.display = '';
+                card.classList.remove('pdf-capture');
+
+                // Prepare PDF data
+                const { jsPDF } = window.jspdf;
+                const imgData = canvas.toDataURL('image/png');
+
+                // A4 dimensions in mm
+                const pdfWidth = 210;
+                const pdfHeight = 297;
+
+                // Preserve aspect ratio: fill width, calculate height
+                const imgRatio = canvas.width / canvas.height;
+                let finalWidth = pdfWidth;
+                let finalHeight = pdfWidth / imgRatio;
+
+                // If taller than A4, scale down to fit height instead
+                if (finalHeight > pdfHeight) {
+                    finalHeight = pdfHeight;
+                    finalWidth = pdfHeight * imgRatio;
+                }
+
+                // Center on A4 page
+                const xOffset = (pdfWidth - finalWidth) / 2;
+                const yOffset = (pdfHeight - finalHeight) / 2;
+
+                // Store for later download
+                pendingPdfData = { imgData, xOffset, yOffset, finalWidth, finalHeight };
+
+                // Show preview
+                document.getElementById('pdf-preview-img').src = imgData;
+                document.getElementById('pdf-preview-overlay').classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+            } catch (err) {
+                console.error('PDF generation failed:', err);
+                alert('Could not generate PDF. Please try again.');
+            } finally {
+                btn.textContent = originalText;
+                btn.classList.remove('generating');
+            }
         }
+
+        function closePreview() {
+            document.getElementById('pdf-preview-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+            pendingPdfData = null;
+        }
+
+        function downloadFromPreview() {
+            if (!pendingPdfData) return;
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('portrait', 'mm', 'a4');
+            const d = pendingPdfData;
+            pdf.addImage(d.imgData, 'PNG', d.xOffset, d.yOffset, d.finalWidth, d.finalHeight);
+            pdf.save('Luis_Prazelos_CV.pdf');
+            closePreview();
+        }
+
+        // Wire up preview buttons
+        document.getElementById('preview-download-btn').addEventListener('click', downloadFromPreview);
+        document.getElementById('preview-cancel-btn').addEventListener('click', closePreview);
+
+        // Close on overlay background click
+        document.getElementById('pdf-preview-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePreview();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreview();
+        });
     </script>
 </body>
 
