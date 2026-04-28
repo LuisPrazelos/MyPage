@@ -9,40 +9,387 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <style>
-        .project-detailed {
-            margin-bottom: 6rem;
-            padding-top: 2rem;
-        }
-
-        .project-tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .project-image-placeholder {
+        .projects-page {
+            max-width: none;
             width: 100%;
-            height: 300px;
-            background-color: rgba(0, 0, 0, 0.03);
-            border: 2px dashed var(--border-color);
+            padding-left: 2.5%;
+            padding-right: 2.5%;
+        }
+
+        .projects-shell {
+            display: grid;
+            grid-template-columns: minmax(240px, 290px) minmax(0, 1.6fr);
+            gap: 2.25rem;
+            align-items: start;
+        }
+
+        .projects-browser,
+        .project-stage {
+            background: rgba(255, 255, 255, 0.74);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        body.dark-mode .projects-browser,
+        body.dark-mode .project-stage {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .browser-topbar,
+        .stage-topbar {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .browser-title,
+        .stage-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+
+        .project-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--accent-red);
+        }
+
+        .project-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-chip {
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            border-color: var(--accent-red);
+            color: var(--text-primary);
+            background: rgba(227, 53, 13, 0.08);
+        }
+
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            max-height: 780px;
+            overflow-y: auto;
+        }
+
+        .project-list-item {
+            border: 0;
+            border-bottom: 1px solid rgba(179, 192, 200, 0.35);
+            background: transparent;
+            text-align: left;
+            padding: 1.15rem 1.2rem;
+            cursor: pointer;
+            transition: background 0.25s ease, border-color 0.25s ease;
+        }
+
+        body.dark-mode .project-list-item {
+            border-bottom-color: rgba(148, 163, 184, 0.18);
+        }
+
+        .project-list-item:hover,
+        .project-list-item.active {
+            background: rgba(227, 53, 13, 0.06);
+        }
+
+        .project-list-item.active {
+            box-shadow: inset 3px 0 0 var(--accent-red);
+        }
+
+        .project-list-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .project-index,
+        .project-status-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .project-index {
+            color: var(--accent-red);
+        }
+
+        .project-status-badge {
+            color: var(--text-secondary);
+        }
+
+        .project-list-item h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .project-list-item p {
+            font-size: 0.92rem;
+            line-height: 1.55;
+            margin-bottom: 0;
+            max-width: none;
+        }
+
+        .project-stage {
+            min-height: 780px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-stage-body {
+            display: grid;
+            grid-template-columns: minmax(430px, 1.05fr) minmax(440px, 1.25fr);
+            gap: 0;
+            flex: 1;
+        }
+
+        .project-visual {
+            min-height: 420px;
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(227, 53, 13, 0.1), rgba(255, 255, 255, 0.05));
+        }
+
+        body.dark-mode .project-visual {
+            background: linear-gradient(145deg, rgba(255, 75, 43, 0.16), rgba(15, 23, 42, 0.22));
+        }
+
+        .project-visual img,
+        .project-visual-placeholder {
+            width: 100%;
+            height: 100%;
+            min-height: 420px;
+        }
+
+        .project-visual img {
+            display: block;
+            object-fit: cover;
+        }
+
+        .project-visual-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
+            text-align: center;
             font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin: 2rem 0;
-            border-radius: 8px;
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)),
+                repeating-linear-gradient(135deg, transparent 0 18px, rgba(227, 53, 13, 0.12) 18px 36px);
         }
 
-        /* Smooth scrolling to anchors */
-        html {
-            scroll-behavior: smooth;
+        .project-visual-overlay {
+            position: absolute;
+            left: 1.2rem;
+            right: 1.2rem;
+            bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .project-phase {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.7);
+            color: #f8fafc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .project-phase::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 16px currentColor;
+        }
+
+        .project-phase[data-status="completed"] {
+            color: #f97316;
+        }
+
+        .project-phase[data-status="building"] {
+            color: #facc15;
+        }
+
+        .project-phase[data-status="concept"] {
+            color: #38bdf8;
+        }
+
+        .project-snapshot {
+            max-width: 16rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+        }
+
+        body.dark-mode .project-snapshot {
+            background: rgba(15, 23, 42, 0.88);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .project-snapshot span {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-red);
+            margin-bottom: 0.35rem;
+        }
+
+        .project-snapshot p {
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: var(--text-primary);
+            margin-bottom: 0;
+            max-width: none;
+        }
+
+        .project-detail {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .project-detail-header h2 {
+            margin-bottom: 0.7rem;
+        }
+
+        .project-detail-header p {
+            font-size: 1rem;
+            max-width: none;
+            margin-bottom: 0;
+        }
+
+        .project-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .project-metric {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            min-height: 110px;
+        }
+
+        .project-metric-label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-red);
+            margin-bottom: 0.65rem;
+        }
+
+        .project-metric-value {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        .project-description {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .project-description p {
+            max-width: none;
+            margin-bottom: 0.95rem;
+        }
+
+        .project-tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .project-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.38rem 0.72rem;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+        }
+
+        .project-empty {
+            padding: 2rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 980px) {
+            .projects-shell,
+            .project-stage-body {
+                grid-template-columns: 1fr;
+            }
+
+            .project-visual {
+                border-right: 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .project-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-visual-overlay {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .project-snapshot {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -64,67 +411,32 @@
         </div>
     </nav>
 
-    <main class="about-container">
+    <main class="about-container projects-page">
         <section class="hero-section" style="padding: 4rem 0 2rem 0;">
-            <h2 class="slide-in-left">Projects Pipeline</h2>
-            <p class="slide-in-left">A designated space for my upcoming applications, AI models, and experiments
-                currently in development.</p>
+            <h2 class="slide-in-left">Project Explorer</h2>
+            <p class="slide-in-left">A portfolio browser built for growth. Pick one project, read the story, and keep the whole collection organized as the list gets bigger over time.</p>
         </section>
 
-        <!-- Self-Driving Cart -->
-        <section id="self-driving-cart" class="project-detailed slide-in-right">
-            <h3>01. Self-Driving Cart</h3>
-            <p
-                style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--accent-red); margin-bottom: 1rem;">
-                // Target: Programming and robotics control.</p>
-            <p>My first major project involved transforming a standard hoverboard into a functional self-driving cart.
-                By integrating hardware components and sensors such as a digital speedometer to regulate the speed I was
-                able to create a unique vehicle. The project provided hands-on experience in bridging the gap between
-                mechanical parts and programmatic control.</p>
-            <div style="margin: 2rem 0;">
-                <img src="IMG_1080.jpeg" alt="Me sitting on the self driving cart"
-                    style="width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover;">
-            </div>
-            <div>
-                <span class="project-tag">Robotics</span>
-                <span class="project-tag">Hardware Modification</span>
-                <span class="project-tag">Python</span>
-            </div>
-        </section>
+        <section class="projects-shell">
+            <aside class="projects-browser slide-in-left">
+                <div class="browser-topbar">
+                    <span class="browser-title">Catalog</span>
+                    <span class="project-count" id="project-count">0 visible</span>
+                </div>
+                <div class="project-filters" id="project-filters"></div>
+                <div class="project-list" id="project-list"></div>
+            </aside>
 
-        <!-- AI Smart Bin -->
-        <section id="ai-smart-bin" class="project-detailed slide-in-left">
-            <h3>02. AI Smart Bin</h3>
-            <p
-                style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--accent-red); margin-bottom: 1rem;">
-                // Target: Introduction to AI and proximity detection.</p>
-            <p>My second project was a self-opening bin designed to automatically open when it detects an object or hand in front of it. I utilized basic AI tools for the detection mechanism, creating this specifically to familiarize myself with artificial intelligence concepts before fully diving into my App & AI studies.</p>
-            <div style="margin: 2rem 0;">
-                <img src="IMG_0908.jpg" alt="AI Smart Bin Project"
-                    style="width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover;">
-            </div>
-            <div>
-                <span class="project-tag">Artificial Intelligence</span>
-                <span class="project-tag">Hardware Modification</span>
-                <span class="project-tag">Sensors</span>
-            </div>
-        </section>
-
-        <!-- Workout Tracker App -->
-        <section id="workout-tracker" class="project-detailed slide-in-right">
-            <h3>03. Workout Tracker App</h3>
-            <p
-                style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--accent-red); margin-bottom: 1rem;">
-                // Target: Full-stack web application. Status: In Development.</p>
-            <p>My third project is a comprehensive web application for tracking and planning workouts. A core feature of the platform is social connectivity, allowing users to share their fitness routines with friends, trainers, and the wider community. The application is currently under active development.</p>
-            <div class="project-image-placeholder">
-                [ Workout App UI - Work In Progress ]
-            </div>
-            <div>
-                <span class="project-tag">Web App</span>
-                <span class="project-tag">Social Networking</span>
-                <span class="project-tag">Health & Fitness</span>
-            </div>
+            <section class="project-stage slide-in-right">
+                <div class="stage-topbar">
+                    <span class="stage-title">Focused View</span>
+                    <span class="project-count" id="selected-project-label">Select a project</span>
+                </div>
+                <div class="project-stage-body">
+                    <div class="project-visual" id="project-visual"></div>
+                    <div class="project-detail" id="project-detail"></div>
+                </div>
+            </section>
         </section>
     </main>
 
@@ -136,6 +448,87 @@
         </div>
     </footer>
 
+    <script>
+        window.projectExplorerData = [
+            {
+                id: 'self-driving-cart',
+                title: 'Self-Driving Cart',
+                status: 'completed',
+                statusLabel: 'Completed',
+                category: 'Robotics',
+                year: '2025',
+                image: 'IMG_1080.jpeg',
+                imageAlt: 'Self-driving cart project',
+                teaser: 'A hoverboard turned into a self-driving cart with controllable speed and real hardware integration.',
+                snapshot: 'First serious build where software, hardware, and experimentation all had to work together.',
+                challenge: 'Combining mechanical parts with digital control in a way that stayed stable and usable.',
+                outcome: 'Built a working prototype and learned how to connect code with real-world motion systems.',
+                stack: ['Robotics', 'Python', 'Hardware', 'Control Systems'],
+                description: [
+                    'This project started as an idea to push a hoverboard beyond its default use. I explored how to transform it into a cart that could be controlled programmatically instead of manually.',
+                    'The most useful part of the build was learning how hardware decisions affect software behavior. It taught me to think about sensors, stability, and safety alongside code.'
+                ]
+            },
+            {
+                id: 'ai-smart-bin',
+                title: 'AI Smart Bin',
+                status: 'completed',
+                statusLabel: 'Completed',
+                category: 'AI',
+                year: '2024',
+                image: 'IMG_0908.jpg',
+                imageAlt: 'AI smart bin project',
+                imagePosition: '38% center',
+                teaser: 'A self-opening bin using detection logic and sensors as an early introduction to AI concepts.',
+                snapshot: 'A smaller build that gave me hands-on confidence before going deeper into App and AI studies.',
+                challenge: 'Making the bin respond reliably when a hand or object moved into view.',
+                outcome: 'Created a practical prototype and got early experience with AI-assisted detection ideas.',
+                stack: ['Artificial Intelligence', 'Sensors', 'Hardware', 'Automation'],
+                description: [
+                    'I built this project to get comfortable with intelligent behavior in physical objects. The goal was simple: make a bin react automatically when someone approached it.',
+                    'Even though it was a smaller project, it gave me a useful starting point for understanding how software can interpret real-world input and trigger an action.'
+                ]
+            },
+            {
+                id: 'workout-tracker',
+                title: 'Workout Tracker App',
+                status: 'building',
+                statusLabel: 'In Development',
+                category: 'Web App',
+                year: 'Now',
+                image: '',
+                imageAlt: 'Workout tracker app work in progress',
+                teaser: 'A workout planning app with tracking, structure, and social features built for long-term use.',
+                snapshot: 'This one is where product thinking, UX, and full-stack development start meeting in one place.',
+                challenge: 'Designing an app that is useful day to day, not just technically functional.',
+                outcome: 'Currently shaping the feature set and user flow for a more complete application.',
+                stack: ['Web App', 'Social', 'Fitness', 'Planning'],
+                description: [
+                    'This project is moving beyond a one-off experiment and into a fuller product experience. I want it to help users track workouts, plan routines, and stay connected with others.',
+                    'It is also a chance to practice building something that has structure, repeat usage, and room to grow over time.'
+                ]
+            },
+            {
+                id: 'future-concepts',
+                title: 'Future Concepts',
+                status: 'concept',
+                statusLabel: 'Open Slot',
+                category: 'Concept',
+                year: 'Future',
+                image: '',
+                imageAlt: 'Future project placeholder',
+                teaser: 'A reserved slot for the next big build, so the portfolio already has room to expand.',
+                snapshot: 'This keeps the page feeling alive and makes it obvious the portfolio is designed to evolve.',
+                challenge: 'Keeping the system flexible enough that new work can be added without redesigning the page.',
+                outcome: 'A portfolio structure that can hold many projects without becoming messy.',
+                stack: ['Scalable Portfolio', 'Planning', 'UX System'],
+                description: [
+                    'I left a concept slot inside the explorer on purpose. It shows that the system is not tied to just three projects and can keep growing as new work appears.',
+                    'Later, you can replace this with a real project or add many more entries to the list without changing the layout.'
+                ]
+            }
+        ];
+    </script>
     <script src="script.js"></script>
 </body>
 

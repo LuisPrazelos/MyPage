@@ -58,6 +58,156 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Project Explorer ---
+    const projectData = window.projectExplorerData;
+    const projectList = document.getElementById('project-list');
+    const projectFilters = document.getElementById('project-filters');
+    const projectVisual = document.getElementById('project-visual');
+    const projectDetail = document.getElementById('project-detail');
+    const projectCount = document.getElementById('project-count');
+    const selectedProjectLabel = document.getElementById('selected-project-label');
+
+    if (Array.isArray(projectData) && projectList && projectFilters && projectVisual && projectDetail) {
+        const filters = ['All', ...new Set(projectData.map(project => project.category))];
+        let activeFilter = 'All';
+        let selectedProjectId = projectData[0]?.id || null;
+
+        const renderFilters = () => {
+            projectFilters.innerHTML = '';
+
+            filters.forEach(filter => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `filter-chip${filter === activeFilter ? ' active' : ''}`;
+                button.textContent = filter;
+                button.addEventListener('click', () => {
+                    activeFilter = filter;
+                    const visibleProjects = getVisibleProjects();
+                    if (!visibleProjects.some(project => project.id === selectedProjectId)) {
+                        selectedProjectId = visibleProjects[0]?.id || null;
+                    }
+                    renderFilters();
+                    renderProjectList();
+                    renderSelectedProject();
+                });
+                projectFilters.appendChild(button);
+            });
+        };
+
+        const getVisibleProjects = () => {
+            if (activeFilter === 'All') {
+                return projectData;
+            }
+            return projectData.filter(project => project.category === activeFilter);
+        };
+
+        const renderProjectList = () => {
+            const visibleProjects = getVisibleProjects();
+            projectList.innerHTML = '';
+
+            if (projectCount) {
+                projectCount.textContent = `${visibleProjects.length} visible`;
+            }
+
+            if (!visibleProjects.length) {
+                projectList.innerHTML = '<div class="project-empty">No projects in this filter yet.</div>';
+                return;
+            }
+
+            visibleProjects.forEach((project, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `project-list-item${project.id === selectedProjectId ? ' active' : ''}`;
+                button.setAttribute('aria-pressed', project.id === selectedProjectId ? 'true' : 'false');
+                button.innerHTML = `
+                    <div class="project-list-meta">
+                        <span class="project-index">${String(index + 1).padStart(2, '0')}</span>
+                        <span class="project-status-badge">${project.statusLabel}</span>
+                    </div>
+                    <h3>${project.title}</h3>
+                    <p>${project.teaser}</p>
+                `;
+                button.addEventListener('click', () => {
+                    selectedProjectId = project.id;
+                    renderProjectList();
+                    renderSelectedProject();
+                });
+                projectList.appendChild(button);
+            });
+        };
+
+        const renderSelectedProject = () => {
+            const visibleProjects = getVisibleProjects();
+            const project = visibleProjects.find(item => item.id === selectedProjectId) || visibleProjects[0];
+
+            if (!project) {
+                if (selectedProjectLabel) {
+                    selectedProjectLabel.textContent = 'No project selected';
+                }
+                projectVisual.innerHTML = '<div class="project-visual-placeholder">Select a project to load its details.</div>';
+                projectDetail.innerHTML = '';
+                return;
+            }
+
+            selectedProjectId = project.id;
+
+            if (selectedProjectLabel) {
+                selectedProjectLabel.textContent = `${project.category} / ${project.year}`;
+            }
+
+            const visualMedia = project.image
+                ? `<img src="${project.image}" alt="${project.imageAlt}" style="object-position: ${project.imagePosition || 'center center'};">`
+                : `<div class="project-visual-placeholder">Preview coming soon for ${project.title}</div>`;
+
+            projectVisual.innerHTML = `
+                ${visualMedia}
+                <div class="project-visual-overlay">
+                    <div class="project-phase" data-status="${project.status}">${project.statusLabel}</div>
+                    <div class="project-snapshot">
+                        <span>Why it matters</span>
+                        <p>${project.snapshot}</p>
+                    </div>
+                </div>
+            `;
+
+            projectDetail.innerHTML = `
+                <div class="project-detail-header">
+                    <h2>${project.title}</h2>
+                    <p>${project.teaser}</p>
+                </div>
+                <div class="project-detail-grid">
+                    <div class="project-metric">
+                        <span class="project-metric-label">Category</span>
+                        <div class="project-metric-value">${project.category}</div>
+                    </div>
+                    <div class="project-metric">
+                        <span class="project-metric-label">Status</span>
+                        <div class="project-metric-value">${project.statusLabel}</div>
+                    </div>
+                    <div class="project-metric">
+                        <span class="project-metric-label">Main Challenge</span>
+                        <div class="project-metric-value">${project.challenge}</div>
+                    </div>
+                    <div class="project-metric">
+                        <span class="project-metric-label">Outcome</span>
+                        <div class="project-metric-value">${project.outcome}</div>
+                    </div>
+                </div>
+                <div class="project-description">
+                    ${project.description.map(paragraph => `<p>${paragraph}</p>`).join('')}
+                </div>
+                <div class="project-tag-row">
+                    ${project.stack.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                </div>
+            `;
+        };
+
+        renderFilters();
+        renderProjectList();
+        renderSelectedProject();
+    }
+
     // --- Neural Grid Background Animation ---
     class Particle {
         constructor(canvas) {
