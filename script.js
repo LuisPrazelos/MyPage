@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 button.addEventListener('click', () => {
                     selectedProjectId = project.id;
+                    history.replaceState(null, '', `#${project.id}`);
                     renderProjectList();
                     renderSelectedProject();
                 });
@@ -210,8 +211,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 stageTitle.textContent = project.title;
             }
 
-            const visualMedia = project.image
-                ? `<img src="${project.image}" alt="${project.imageAlt}" style="object-position: ${project.imagePosition || 'center center'}; object-fit: ${project.imageFit || 'cover'};">`
+            const imgStyle = `object-position: ${project.imagePosition || 'center center'}; object-fit: ${project.imageFit || 'cover'};`;
+            const visualMedia = project.image && project.image2
+                ? `<div style="display:grid;grid-template-rows:1fr 1fr;height:100%;min-height:420px;gap:0;">
+                       <img src="${project.image}"  alt="${project.imageAlt}" style="${imgStyle}width:100%;height:100%;display:block;">
+                       <img src="${project.image2}" alt="${project.imageAlt}" style="${imgStyle}width:100%;height:100%;display:block;">
+                   </div>`
+                : project.image
+                ? `<img src="${project.image}" alt="${project.imageAlt}" style="${imgStyle}">`
                 : `<div class="project-visual-placeholder">Preview coming soon for ${project.title}</div>`;
 
             projectVisual.innerHTML = `
@@ -261,6 +268,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFilters();
         renderProjectList();
         renderSelectedProject();
+
+        // Navigate to the project referenced in the URL hash (e.g. projects.html#ai-smart-bin)
+        const hashId = window.location.hash.slice(1);
+        if (hashId && visibleData.some(p => p.id === hashId)) {
+            selectedProjectId = hashId;
+            renderProjectList();
+            renderSelectedProject();
+        }
 
         // --- Live Preview Modal ---
         const backdrop    = document.getElementById('live-preview-backdrop');
