@@ -39,23 +39,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Theme Switching Logic ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
+    const COLORS = { light: '#f4f4f4', dark: '#0f172a' };
 
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark-mode');
+    function applyTheme(isDark) {
+        body.classList.toggle('dark-mode', isDark);
+        document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
+            meta.setAttribute('content', isDark ? COLORS.dark : COLORS.light);
+        });
     }
+
+    // Use saved preference, fall back to OS preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme === 'dark');
+    } else {
+        applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+
+    // Keep in sync if user changes OS preference without a saved override
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            applyTheme(e.matches);
+        }
+    });
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            // Save preference
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
+            const isDark = !body.classList.contains('dark-mode');
+            applyTheme(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
     }
 
