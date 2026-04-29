@@ -358,6 +358,25 @@
             color: var(--text-secondary);
         }
 
+        .project-live-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            background: var(--accent-red);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: opacity 0.2s ease;
+            align-self: flex-start;
+        }
+
+        .project-live-link:hover {
+            opacity: 0.85;
+        }
+
         .project-empty {
             padding: 2rem 1.2rem;
             font-family: 'JetBrains Mono', monospace;
@@ -456,7 +475,8 @@
                 status: 'completed',
                 statusLabel: 'Completed',
                 category: 'Robotics',
-                year: '2025',
+                year: '6th Year Middelbaar',
+                period: '6th Year of Secondary School (Middelbaar)',
                 image: 'IMG_1080.jpeg',
                 imageAlt: 'Self-driving cart project',
                 teaser: 'A hoverboard turned into a self-driving cart with controllable speed and real hardware integration.',
@@ -475,7 +495,8 @@
                 status: 'completed',
                 statusLabel: 'Completed',
                 category: 'AI',
-                year: '2024',
+                year: 'Y1 S2 — Hogeschool',
+                period: '1st Year, 2nd Semester at Hogeschool',
                 image: 'IMG_0908.jpg',
                 imageAlt: 'AI smart bin project',
                 imagePosition: '38% center',
@@ -490,13 +511,35 @@
                 ]
             },
             {
+                id: 'vrcade',
+                title: 'VRcade',
+                status: 'completed',
+                statusLabel: 'Completed',
+                category: 'VR / Game',
+                year: 'Y1 S2 — Hogeschool',
+                period: '1st Year, 2nd Semester at Hogeschool',
+                image: 'Vrcade.png',
+                imageAlt: 'VRcade project',
+                link: 'https://vrcade.netlify.app',
+                teaser: 'A VR arcade experience combining immersive gameplay with a creative virtual environment.',
+                snapshot: 'Exploring VR development and interactive design to build a fun, engaging arcade-style experience.',
+                challenge: 'Creating an immersive environment that feels natural and responsive inside a VR headset.',
+                outcome: 'Built and deployed a working VR arcade experience, live and accessible online.',
+                stack: ['VR', 'Game Development', '3D Design', 'Interactive'],
+                description: [
+                    'VRcade is a project focused on bringing arcade-style fun into a virtual reality setting. The goal is to make something that feels immediately enjoyable while also pushing my understanding of immersive design.',
+                    'It is giving me hands-on experience with VR development workflows, spatial interaction, and building environments that respond to the player in real time.'
+                ]
+            },
+            {
                 id: 'workout-tracker',
                 title: 'Workout Tracker App',
                 status: 'building',
                 statusLabel: 'In Development',
                 category: 'Web App',
-                year: 'Now',
-                image: '',
+                year: 'Y2 S1 — Hogeschool',
+                period: '2nd Year, 1st Semester at Hogeschool',
+                image: 'WorkoutPlanner.png',
                 imageAlt: 'Workout tracker app work in progress',
                 teaser: 'A workout planning app with tracking, structure, and social features built for long-term use.',
                 snapshot: 'This one is where product thinking, UX, and full-stack development start meeting in one place.',

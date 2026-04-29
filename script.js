@@ -182,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="project-metric-value">${project.category}</div>
                     </div>
                     <div class="project-metric">
-                        <span class="project-metric-label">Status</span>
-                        <div class="project-metric-value">${project.statusLabel}</div>
+                        <span class="project-metric-label">Period</span>
+                        <div class="project-metric-value">${project.period || project.year}</div>
                     </div>
                     <div class="project-metric">
                         <span class="project-metric-label">Main Challenge</span>
@@ -200,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="project-tag-row">
                     ${project.stack.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
                 </div>
+                ${project.link ? `<a href="${project.link}" target="_blank" rel="noopener noreferrer" class="project-live-link">View Live →</a>` : ''}
             `;
         };
 
