@@ -176,10 +176,12 @@ nav {
     padding: 2rem 5%;
     display: flex;
     justify-content: flex-end;
+    position: relative;
 }
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 2.5rem;
 }
 
@@ -193,6 +195,89 @@ nav {
 
 .nav-links a:hover, .nav-links a.active {
     color: var(--text-primary);
+}
+
+/* Hamburger (hidden on desktop) */
+.nav-hamburger {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.45rem;
+    border-radius: 4px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.nav-hamburger:hover {
+    border-color: var(--accent-red);
+    background: rgba(227, 53, 13, 0.05);
+}
+
+.nav-hamburger svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+@media (max-width: 640px) {
+    nav {
+        padding: 0.9rem 5%;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 150;
+        background: var(--bg-color);
+        border-bottom: 1px solid var(--border-color);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.5rem 5% 1rem;
+        z-index: 200;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+    }
+
+    .nav-links.nav-open {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        width: 100%;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-links a:last-of-type {
+        border-bottom: none;
+    }
+
+    .theme-toggle {
+        margin-left: 0;
+    }
 }
 
 /* Theme Toggle */

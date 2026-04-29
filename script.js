@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reveal targeted elements smoothly on scroll
     const animatedElements = document.querySelectorAll('.fade-up, .slide-in-left, .slide-in-right, .scale-in');
     
-    const observer = new IntersectionObserver((entries, observer) => {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
@@ -35,6 +35,39 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.setProperty('--mouse-y', `${y}px`);
         });
     });
+
+    // --- Mobile Nav Hamburger ---
+    const navEl = document.querySelector('nav');
+    const navLinks = navEl?.querySelector('.nav-links');
+    if (navEl && navLinks) {
+        const hamburger = document.createElement('button');
+        hamburger.className = 'nav-hamburger';
+        hamburger.setAttribute('aria-label', 'Toggle navigation');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.innerHTML = `
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+                <line class="ham-top" x1="2" y1="4" x2="16" y2="4"/>
+                <line class="ham-mid" x1="2" y1="9" x2="16" y2="9"/>
+                <line class="ham-bot" x1="2" y1="14" x2="16" y2="14"/>
+            </svg>`;
+        navEl.insertBefore(hamburger, navLinks);
+
+        const toggle = (force) => {
+            const open = force ?? !navLinks.classList.contains('nav-open');
+            navLinks.classList.toggle('nav-open', open);
+            hamburger.setAttribute('aria-expanded', String(open));
+        };
+
+        // Move theme toggle out of nav-links so it's always visible in the bar
+        const themeBtn = navLinks.querySelector('#theme-toggle');
+        if (themeBtn) navEl.appendChild(themeBtn);
+
+        hamburger.addEventListener('click', () => toggle());
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggle(false)));
+        document.addEventListener('click', (e) => {
+            if (!navEl.contains(e.target)) toggle(false);
+        });
+    }
 
     // --- Theme Switching Logic ---
     const themeToggle = document.getElementById('theme-toggle');
@@ -79,11 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectDetail = document.getElementById('project-detail');
     const projectCount = document.getElementById('project-count');
     const selectedProjectLabel = document.getElementById('selected-project-label');
+    const stageTitle = document.getElementById('stage-title');
 
     if (Array.isArray(projectData) && projectList && projectFilters && projectVisual && projectDetail) {
-        const filters = ['All', ...new Set(projectData.map(project => project.category))];
+        const visibleData = projectData.filter(project => !project.hidden);
+        const filters = ['All', ...new Set(visibleData.map(project => project.category))];
         let activeFilter = 'All';
-        let selectedProjectId = projectData[0]?.id || null;
+        let selectedProjectId = visibleData[0]?.id || null;
 
         const renderFilters = () => {
             projectFilters.innerHTML = '';
@@ -109,9 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const getVisibleProjects = () => {
             if (activeFilter === 'All') {
-                return projectData;
+                return visibleData;
             }
-            return projectData.filter(project => project.category === activeFilter);
+            return visibleData.filter(project => project.category === activeFilter);
         };
 
         const renderProjectList = () => {
@@ -157,6 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (selectedProjectLabel) {
                     selectedProjectLabel.textContent = 'No project selected';
                 }
+                if (stageTitle) {
+                    stageTitle.textContent = 'Focused View';
+                }
                 projectVisual.innerHTML = '<div class="project-visual-placeholder">Select a project to load its details.</div>';
                 projectDetail.innerHTML = '';
                 return;
@@ -168,8 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedProjectLabel.textContent = `${project.category} / ${project.year}`;
             }
 
+            if (stageTitle) {
+                stageTitle.textContent = project.title;
+            }
+
             const visualMedia = project.image
-                ? `<img src="${project.image}" alt="${project.imageAlt}" style="object-position: ${project.imagePosition || 'center center'};">`
+                ? `<img src="${project.image}" alt="${project.imageAlt}" style="object-position: ${project.imagePosition || 'center center'}; object-fit: ${project.imageFit || 'cover'};">`
                 : `<div class="project-visual-placeholder">Preview coming soon for ${project.title}</div>`;
 
             projectVisual.innerHTML = `
@@ -212,13 +254,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="project-tag-row">
                     ${project.stack.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
                 </div>
-                ${project.link ? `<a href="${project.link}" target="_blank" rel="noopener noreferrer" class="project-live-link">View Live →</a>` : ''}
+                ${project.link ? `<button type="button" class="project-live-link" data-live-url="${project.link}">View Live →</button>` : ''}
             `;
         };
 
         renderFilters();
         renderProjectList();
         renderSelectedProject();
+
+        // --- Live Preview Modal ---
+        const backdrop    = document.getElementById('live-preview-backdrop');
+        const iframe      = document.getElementById('live-preview-iframe');
+        const urlBar      = document.getElementById('live-preview-url');
+        const openLink    = document.getElementById('live-preview-open');
+        const fallbackLink = document.getElementById('live-preview-fallback');
+        const blockedMsg  = document.getElementById('live-preview-blocked');
+        const closeBtn    = document.getElementById('live-preview-close');
+
+        const openPreview = (url) => {
+            urlBar.textContent = url;
+            openLink.href = url;
+            fallbackLink.href = url;
+            blockedMsg.classList.remove('visible');
+            iframe.style.display = 'block';
+            iframe.src = url;
+            backdrop.classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            // detect if the iframe was blocked (X-Frame-Options / CSP)
+            iframe.onload = () => {
+                try {
+                    // accessing contentDocument throws for cross-origin — that means it loaded fine
+                    void iframe.contentDocument;
+                } catch (_) {
+                    // cross-origin but loaded — that's expected, don't show blocked
+                }
+            };
+            iframe.onerror = () => {
+                iframe.style.display = 'none';
+                blockedMsg.classList.add('visible');
+            };
+        };
+
+        const closePreview = () => {
+            backdrop.classList.remove('open');
+            iframe.src = '';
+            document.body.style.overflow = '';
+        };
+
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-live-url]');
+            if (btn) openPreview(btn.dataset.liveUrl);
+        });
+
+        closeBtn.addEventListener('click', closePreview);
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closePreview();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreview();
+        });
     }
 
     // --- Neural Grid Background Animation ---

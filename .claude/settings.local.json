@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(jpg|jpeg|png|gif|webp|svg\\)$\")",
+      "Bash(git add *)"
+    ]
+  }
+}
