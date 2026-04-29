@@ -7,7 +7,8 @@
     { "src": "script.js", "use": "@vercel/static" },
     { "src": "favicon.png", "use": "@vercel/static" },
     { "src": "*.jpg", "use": "@vercel/static" },
-    { "src": "*.jpeg", "use": "@vercel/static" }
+    { "src": "*.jpeg", "use": "@vercel/static" },
+    { "src": "*.png", "use": "@vercel/static" }
   ],
   "headers": [
     {
